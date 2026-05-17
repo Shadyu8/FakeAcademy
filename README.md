@@ -4,6 +4,20 @@ FakeAcademy is a portfolio project for project-based coding practice. Students p
 
 The first version is intentionally small: it proves the core loop before adding accounts, backend grading, submissions, or larger Odin Project-style projects.
 
+## Showcase
+
+### Python Assignment
+
+![Python Tic Tac Toe assignment](assets/screenshots/tic-tac-toe-python.png)
+
+### C++ Assignment
+
+![C++ Tic Tac Toe assignment](assets/screenshots/tic-tac-toe-cpp.png)
+
+### JavaScript Assignment
+
+![JavaScript Tic Tac Toe assignment](assets/screenshots/tic-tac-toe-javascript.png)
+
 ## Features
 
 - Assignment sidebar grouped by Python, C++, and JavaScript
