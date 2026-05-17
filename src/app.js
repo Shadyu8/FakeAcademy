@@ -2,7 +2,7 @@ import { assignments } from "./curriculum.js";
 import { evaluateSubmission } from "./testEngine.js";
 
 const state = {
-  activeAssignmentId: assignments[0]?.id,
+  activeAssignmentId: getInitialAssignmentId(),
   activeTab: "instructions",
   progress: loadProgress(),
 };
@@ -143,10 +143,11 @@ elements.assignmentList.addEventListener("click", (event) => {
   const item = event.target.closest("[data-assignment-id]");
   if (!item) return;
 
-  state.activeAssignmentId = item.dataset.assignmentId;
-  state.activeTab = "instructions";
-  elements.tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.tab === state.activeTab));
-  renderAssignment();
+  selectAssignment(item.dataset.assignmentId, true);
+});
+
+window.addEventListener("hashchange", () => {
+  selectAssignment(getInitialAssignmentId(), false);
 });
 
 elements.tabs.forEach((tab) => {
@@ -205,6 +206,37 @@ elements.runTests.addEventListener("click", () => {
 });
 
 renderAssignment();
+
+/**
+ * Reads the assignment id from the URL hash when it matches a real assignment.
+ *
+ * @returns {string} The assignment id to open first.
+ */
+function getInitialAssignmentId() {
+  const idFromHash = window.location.hash.replace("#", "");
+  return assignments.some((assignment) => assignment.id === idFromHash) ? idFromHash : assignments[0]?.id;
+}
+
+/**
+ * Changes the active assignment and optionally updates the page URL.
+ *
+ * @param {string} assignmentId The assignment the student selected.
+ * @param {boolean} updateUrl Whether the browser URL should point to this assignment.
+ * @returns {void} Updates state and redraws the workspace.
+ */
+function selectAssignment(assignmentId, updateUrl) {
+  if (!assignments.some((assignment) => assignment.id === assignmentId)) return;
+
+  state.activeAssignmentId = assignmentId;
+  state.activeTab = "instructions";
+  elements.tabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.tab === state.activeTab));
+
+  if (updateUrl) {
+    window.history.replaceState(null, "", `#${assignmentId}`);
+  }
+
+  renderAssignment();
+}
 
 /**
  * Gets a student's saved draft, or the starter code if no draft exists.
