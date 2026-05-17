@@ -35,23 +35,40 @@ export const assignments = [
 
 
 def create_board():
-    # Return a list with nine EMPTY cells.
+    """
+    What it does: makes a fresh Tic Tac Toe board.
+    Param: none.
+    Return: a list with nine empty spaces.
+    """
     pass
 
 
 def make_move(board, position, player):
-    # Return True when the move is placed.
-    # Return False when position is invalid or already taken.
+    """
+    What it does: tries to place X or O on the board.
+    Param board: the current nine-space board.
+    Param position: the space number the player chose.
+    Param player: the symbol to place, usually "X" or "O".
+    Return: True if the move worked, False if it was not allowed.
+    """
     pass
 
 
 def get_winner(board):
-    # Return "X", "O", or None.
+    """
+    What it does: checks whether a player has three in a row.
+    Param board: the current nine-space board.
+    Return: "X", "O", or None when nobody has won.
+    """
     pass
 
 
 def is_draw(board):
-    # Return True only when the board is full and there is no winner.
+    """
+    What it does: checks whether the game ended with no winner.
+    Param board: the current nine-space board.
+    Return: True for a draw, otherwise False.
+    """
     pass`,
     instructions: ticTacToeInstructions,
     rubric: ticTacToeRubric,
@@ -97,21 +114,38 @@ def is_draw(board):
 
 using Board = std::vector<char>;
 
+/*
+  What it does: makes a fresh Tic Tac Toe board.
+  Param: none.
+  Return: a Board with nine empty spaces.
+*/
 Board createBoard() {
-  // Return a board with nine empty cells.
 }
 
+/*
+  What it does: tries to place X or O on the board.
+  Param board: the current nine-space board.
+  Param position: the space number the player chose.
+  Param player: the symbol to place, usually 'X' or 'O'.
+  Return: true if the move worked, false if it was not allowed.
+*/
 bool makeMove(Board& board, int position, char player) {
-  // Return true when the move is placed.
-  // Return false when position is invalid or already taken.
 }
 
+/*
+  What it does: checks whether a player has three in a row.
+  Param board: the current nine-space board.
+  Return: 'X', 'O', or ' ' when nobody has won.
+*/
 char getWinner(const Board& board) {
-  // Return 'X', 'O', or ' ' when there is no winner.
 }
 
+/*
+  What it does: checks whether the game ended with no winner.
+  Param board: the current nine-space board.
+  Return: true for a draw, otherwise false.
+*/
 bool isDraw(const Board& board) {
-  // Return true only when the board is full and there is no winner.
 }`,
     instructions: ticTacToeInstructions,
     rubric: ticTacToeRubric,
@@ -152,21 +186,42 @@ bool isDraw(const Board& board) {
     concepts: ticTacToeConcepts,
     files: ["ticTacToe.js"],
     checkMode: "javascript",
-    startingCode: `function createBoard() {
-  // Return an array with nine empty cells.
+    startingCode: `/**
+ * What it does: makes a fresh Tic Tac Toe board.
+ *
+ * @param {void} none No information is needed.
+ * @returns {string[]} A list with nine empty spaces.
+ */
+function createBoard() {
 }
 
+/**
+ * What it does: tries to place X or O on the board.
+ *
+ * @param {string[]} board The current nine-space board.
+ * @param {number} position The space number the player chose.
+ * @param {string} player The symbol to place, usually "X" or "O".
+ * @returns {boolean} True if the move worked, false if it was not allowed.
+ */
 function makeMove(board, position, player) {
-  // Return true when the move is placed.
-  // Return false when position is invalid or already taken.
 }
 
+/**
+ * What it does: checks whether a player has three in a row.
+ *
+ * @param {string[]} board The current nine-space board.
+ * @returns {string|null} "X", "O", or null when nobody has won.
+ */
 function getWinner(board) {
-  // Return "X", "O", or null.
 }
 
+/**
+ * What it does: checks whether the game ended with no winner.
+ *
+ * @param {string[]} board The current nine-space board.
+ * @returns {boolean} True for a draw, otherwise false.
+ */
 function isDraw(board) {
-  // Return true only when the board is full and there is no winner.
 }
 
 module.exports = {

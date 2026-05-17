@@ -26,10 +26,20 @@ const elements = {
   resultList: document.querySelector("#result-list"),
 };
 
+/**
+ * Finds the assignment currently selected in the sidebar.
+ *
+ * @returns {object} The active assignment, or the first assignment as a fallback.
+ */
 function getActiveAssignment() {
   return assignments.find((assignment) => assignment.id === state.activeAssignmentId) || assignments[0];
 }
 
+/**
+ * Draws the sidebar list and groups projects under their language.
+ *
+ * @returns {void} Updates the page directly.
+ */
 function renderAssignmentList() {
   elements.trackCount.textContent = `${assignments.length} projects`;
   elements.assignmentList.innerHTML = getAssignmentsByLanguage()
@@ -59,6 +69,12 @@ function renderAssignmentList() {
     .join("");
 }
 
+/**
+ * Shows the small facts under the project summary.
+ *
+ * @param {object} assignment The assignment currently being viewed.
+ * @returns {void} Updates the page directly.
+ */
 function renderMeta(assignment) {
   elements.projectMeta.innerHTML = [
     { label: "Language", value: assignment.language },
@@ -77,6 +93,12 @@ function renderMeta(assignment) {
     .join("");
 }
 
+/**
+ * Shows instructions, files, or rubric for the current project tab.
+ *
+ * @param {object} assignment The assignment currently being viewed.
+ * @returns {void} Updates the page directly.
+ */
 function renderTabPanel(assignment) {
   const listByTab = {
     instructions: assignment.instructions,
@@ -91,6 +113,11 @@ function renderTabPanel(assignment) {
   `;
 }
 
+/**
+ * Refreshes the whole main workspace for the selected assignment.
+ *
+ * @returns {void} Updates the page directly.
+ */
 function renderAssignment() {
   const assignment = getActiveAssignment();
 
@@ -179,10 +206,22 @@ elements.runTests.addEventListener("click", () => {
 
 renderAssignment();
 
+/**
+ * Gets a student's saved draft, or the starter code if no draft exists.
+ *
+ * @param {object} assignment The assignment currently being viewed.
+ * @returns {string} Code to place in the editor.
+ */
 function getSavedCode(assignment) {
   return state.progress.codeByAssignment[assignment.id] || assignment.startingCode;
 }
 
+/**
+ * Converts saved progress into a short label for the sidebar.
+ *
+ * @param {string} assignmentId The unique id for an assignment.
+ * @returns {string} A plain progress label, like "Completed" or "Not started".
+ */
 function getAssignmentStatusLabel(assignmentId) {
   const status = state.progress.statusByAssignment[assignmentId];
   const hasDraft = Boolean(state.progress.codeByAssignment[assignmentId]);
@@ -194,6 +233,11 @@ function getAssignmentStatusLabel(assignmentId) {
   return "Not started";
 }
 
+/**
+ * Groups all assignments by their programming language.
+ *
+ * @returns {Array<[string, object[]]>} Language names paired with their assignments.
+ */
 function getAssignmentsByLanguage() {
   return Object.entries(
     assignments.reduce((groups, assignment) => {
@@ -204,6 +248,11 @@ function getAssignmentsByLanguage() {
   );
 }
 
+/**
+ * Reads saved drafts and check status from this browser.
+ *
+ * @returns {{codeByAssignment: object, statusByAssignment: object}} Saved student progress.
+ */
 function loadProgress() {
   try {
     const saved = JSON.parse(localStorage.getItem("fakeacademy-progress-v1"));
@@ -219,10 +268,21 @@ function loadProgress() {
   }
 }
 
+/**
+ * Saves drafts and check status in this browser.
+ *
+ * @returns {void} Writes progress to localStorage.
+ */
 function saveProgress() {
   localStorage.setItem("fakeacademy-progress-v1", JSON.stringify(state.progress));
 }
 
+/**
+ * Makes text safe to place inside HTML result cards.
+ *
+ * @param {*} value The text or value that will be shown on the page.
+ * @returns {string} Text with unsafe HTML characters replaced.
+ */
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
