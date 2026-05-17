@@ -141,7 +141,9 @@ elements.codeEditor.addEventListener("input", () => {
 
 elements.runTests.addEventListener("click", () => {
   const assignment = getActiveAssignment();
-  const result = evaluateSubmission(elements.codeEditor.value, assignment.tests);
+  const result = evaluateSubmission(elements.codeEditor.value, assignment.tests, {
+    mode: assignment.checkMode,
+  });
   state.progress.statusByAssignment[assignment.id] = result.status === "passed" ? "passed" : "attempted";
   state.progress.codeByAssignment[assignment.id] = elements.codeEditor.value;
   saveProgress();

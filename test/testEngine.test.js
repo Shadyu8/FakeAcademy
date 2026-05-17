@@ -67,3 +67,18 @@ test("evaluateSubmission reports syntax errors as a failed run", () => {
   assert.equal(result.passed, 0);
   assert.equal(result.results[0].name, "Code runs without syntax or runtime errors");
 });
+
+test("evaluateSubmission can run static checks without executing the submission", () => {
+  const result = evaluateSubmission("def get_winner(board):\n    pass", [
+    {
+      name: "defines get_winner",
+      run(_submission, context) {
+        assert.match(context.code, /def\s+get_winner/);
+      },
+    },
+  ], {
+    mode: "static",
+  });
+
+  assert.equal(result.status, "passed");
+});
