@@ -1,4 +1,5 @@
 import { assignments } from "./curriculum.js";
+import { evaluateSubmission } from "./testEngine.js";
 
 const state = {
   activeAssignmentId: assignments[0]?.id,
@@ -119,7 +120,30 @@ elements.resetCode.addEventListener("click", () => {
 });
 
 elements.runTests.addEventListener("click", () => {
-  elements.resultSummary.textContent = "Automated checks are coming in the next slice.";
+  const result = evaluateSubmission(elements.codeEditor.value, getActiveAssignment().tests);
+  elements.resultSummary.textContent = `${result.passed}/${result.total} checks passed`;
+  elements.resultList.innerHTML = result.results
+    .map(
+      (item) => `
+        <div class="result-item is-${item.status}">
+          <span>${item.status === "passed" ? "Pass" : "Fail"}</span>
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <p>${escapeHtml(item.message)}</p>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
 });
 
 renderAssignment();
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}

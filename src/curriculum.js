@@ -1,3 +1,5 @@
+import { assertDeepEqual, assertEqual } from "./testEngine.js";
+
 export const assignments = [
   {
     id: "recipe-card",
@@ -29,6 +31,49 @@ module.exports = { buildRecipeCard };`,
       "Handles different recipe durations and serving counts.",
       "Keeps presentation formatting consistent.",
     ],
+    tests: [
+      {
+        name: "exports a buildRecipeCard function",
+        run(submission) {
+          assertEqual(typeof submission.buildRecipeCard, "function", "buildRecipeCard should be exported");
+        },
+      },
+      {
+        name: "formats a quick recipe card",
+        run(submission) {
+          const recipe = {
+            name: "Lemon Pasta",
+            minutes: 25,
+            servings: 2,
+            ingredients: ["pasta", "lemon", "parmesan"],
+          };
+
+          assertDeepEqual(
+            submission.buildRecipeCard(recipe),
+            {
+              title: "Lemon Pasta",
+              subtitle: "25 min · 2 servings",
+              ingredients: "pasta, lemon, parmesan",
+              isQuick: true,
+            },
+            "Quick recipe card output is incorrect",
+          );
+        },
+      },
+      {
+        name: "marks longer recipes as not quick",
+        run(submission) {
+          const recipe = {
+            name: "Sunday Stew",
+            minutes: 95,
+            servings: 6,
+            ingredients: ["beef", "carrots", "stock"],
+          };
+
+          assertEqual(submission.buildRecipeCard(recipe).isQuick, false, "Long recipes should not be quick");
+        },
+      },
+    ],
   },
   {
     id: "task-board",
@@ -59,6 +104,47 @@ module.exports = { summarizeBoard };`,
       "Preserves task order for nextTask.",
       "Works for empty task lists.",
       "Keeps the result object shape stable.",
+    ],
+    tests: [
+      {
+        name: "exports a summarizeBoard function",
+        run(submission) {
+          assertEqual(typeof submission.summarizeBoard, "function", "summarizeBoard should be exported");
+        },
+      },
+      {
+        name: "counts task statuses and finds the next todo",
+        run(submission) {
+          const tasks = [
+            { title: "Write brief", status: "done" },
+            { title: "Build editor", status: "todo" },
+            { title: "Fix deploy", status: "blocked" },
+            { title: "Polish UI", status: "todo" },
+          ];
+
+          assertDeepEqual(
+            submission.summarizeBoard(tasks),
+            {
+              total: 4,
+              done: 1,
+              blocked: 1,
+              nextTask: "Build editor",
+            },
+            "Board summary is incorrect",
+          );
+        },
+      },
+      {
+        name: "handles a board with no todo tasks",
+        run(submission) {
+          const tasks = [
+            { title: "Ship", status: "done" },
+            { title: "Review", status: "blocked" },
+          ];
+
+          assertEqual(submission.summarizeBoard(tasks).nextTask, null, "nextTask should be null without todos");
+        },
+      },
     ],
   },
 ];
