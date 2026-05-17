@@ -37,4 +37,3 @@ npm test
 - Add backend runners for Python and C++ behavioral tests
 - Add project pages with richer requirements and visual previews
 - Store submissions with a backend API
-- Add teacher-authored test suites and hidden checks
