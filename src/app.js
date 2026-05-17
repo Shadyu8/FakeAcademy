@@ -32,17 +32,28 @@ function getActiveAssignment() {
 
 function renderAssignmentList() {
   elements.trackCount.textContent = `${assignments.length} projects`;
-  elements.assignmentList.innerHTML = assignments
+  elements.assignmentList.innerHTML = getAssignmentsByLanguage()
     .map(
-      (assignment, index) => `
-        <button class="assignment-item ${assignment.id === state.activeAssignmentId ? "is-active" : ""}" type="button" data-assignment-id="${assignment.id}">
-          <span class="assignment-index">${String(index + 1).padStart(2, "0")}</span>
-          <span>
-            <strong>${assignment.title}</strong>
-            <small>${assignment.level} · ${assignment.duration}</small>
-            <em class="assignment-status">${getAssignmentStatusLabel(assignment.id)}</em>
-          </span>
-        </button>
+      ([language, languageAssignments]) => `
+        <section class="language-group" aria-label="${language} assignments">
+          <h2>${language}</h2>
+          ${languageAssignments
+            .map((assignment) => {
+              const index = assignments.findIndex((candidate) => candidate.id === assignment.id);
+
+              return `
+                <button class="assignment-item ${assignment.id === state.activeAssignmentId ? "is-active" : ""}" type="button" data-assignment-id="${assignment.id}">
+                  <span class="assignment-index">${String(index + 1).padStart(2, "0")}</span>
+                  <span>
+                    <strong>${assignment.title}</strong>
+                    <small>${assignment.level} · ${assignment.duration}</small>
+                    <em class="assignment-status">${getAssignmentStatusLabel(assignment.id)}</em>
+                  </span>
+                </button>
+              `;
+            })
+            .join("")}
+        </section>
       `,
     )
     .join("");
@@ -50,9 +61,10 @@ function renderAssignmentList() {
 
 function renderMeta(assignment) {
   elements.projectMeta.innerHTML = [
+    { label: "Language", value: assignment.language },
     { label: "Time", value: assignment.duration },
     { label: "Concepts", value: assignment.concepts.join(", ") },
-    { label: "File", value: assignment.files[0] },
+    { label: "Checks", value: assignment.checkMode === "javascript" ? "Behavioral" : "Static contract" },
   ]
     .map(
       (item) => `
@@ -180,6 +192,16 @@ function getAssignmentStatusLabel(assignmentId) {
   if (status === "changed") return "Draft changed";
   if (hasDraft) return "Draft saved";
   return "Not started";
+}
+
+function getAssignmentsByLanguage() {
+  return Object.entries(
+    assignments.reduce((groups, assignment) => {
+      groups[assignment.language] ||= [];
+      groups[assignment.language].push(assignment);
+      return groups;
+    }, {}),
+  );
 }
 
 function loadProgress() {

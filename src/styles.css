@@ -97,7 +97,19 @@ button {
 
 .assignment-list {
   display: grid;
+  gap: 18px;
+}
+
+.language-group {
+  display: grid;
   gap: 10px;
+}
+
+.language-group h2 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
 }
 
 .assignment-item {
@@ -209,7 +221,7 @@ h1 {
 
 .project-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin: 22px 0;
 }
