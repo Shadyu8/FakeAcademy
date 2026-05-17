@@ -4,6 +4,7 @@ import { evaluateSubmission } from "./testEngine.js";
 const state = {
   activeAssignmentId: assignments[0]?.id,
   activeTab: "instructions",
+  progress: loadProgress(),
 };
 
 const elements = {
@@ -39,6 +40,7 @@ function renderAssignmentList() {
           <span>
             <strong>${assignment.title}</strong>
             <small>${assignment.level} · ${assignment.duration}</small>
+            <em class="assignment-status">${getAssignmentStatusLabel(assignment.id)}</em>
           </span>
         </button>
       `,
@@ -86,8 +88,11 @@ function renderAssignment() {
   elements.assignmentSummary.textContent = assignment.summary;
   elements.activeFile.textContent = assignment.files[0];
   elements.editorTitle.textContent = "Skeleton file";
-  elements.codeEditor.value = assignment.startingCode;
-  elements.resultSummary.textContent = "Run the checks when your implementation is ready.";
+  elements.codeEditor.value = getSavedCode(assignment);
+  elements.resultSummary.textContent =
+    state.progress.statusByAssignment[assignment.id] === "passed"
+      ? "Completed. You can keep improving the solution and rerun checks."
+      : "Run the checks when your implementation is ready.";
   elements.resultList.innerHTML = "";
 
   renderAssignmentList();
@@ -114,13 +119,34 @@ elements.tabs.forEach((tab) => {
 });
 
 elements.resetCode.addEventListener("click", () => {
-  elements.codeEditor.value = getActiveAssignment().startingCode;
+  const assignment = getActiveAssignment();
+  elements.codeEditor.value = assignment.startingCode;
+  delete state.progress.codeByAssignment[assignment.id];
+  delete state.progress.statusByAssignment[assignment.id];
+  saveProgress();
+  renderAssignmentList();
   elements.resultSummary.textContent = "Skeleton restored.";
   elements.resultList.innerHTML = "";
 });
 
+elements.codeEditor.addEventListener("input", () => {
+  const assignment = getActiveAssignment();
+  state.progress.codeByAssignment[assignment.id] = elements.codeEditor.value;
+  if (state.progress.statusByAssignment[assignment.id] === "passed") {
+    state.progress.statusByAssignment[assignment.id] = "changed";
+  }
+  saveProgress();
+  renderAssignmentList();
+});
+
 elements.runTests.addEventListener("click", () => {
-  const result = evaluateSubmission(elements.codeEditor.value, getActiveAssignment().tests);
+  const assignment = getActiveAssignment();
+  const result = evaluateSubmission(elements.codeEditor.value, assignment.tests);
+  state.progress.statusByAssignment[assignment.id] = result.status === "passed" ? "passed" : "attempted";
+  state.progress.codeByAssignment[assignment.id] = elements.codeEditor.value;
+  saveProgress();
+  renderAssignmentList();
+
   elements.resultSummary.textContent = `${result.passed}/${result.total} checks passed`;
   elements.resultList.innerHTML = result.results
     .map(
@@ -138,6 +164,40 @@ elements.runTests.addEventListener("click", () => {
 });
 
 renderAssignment();
+
+function getSavedCode(assignment) {
+  return state.progress.codeByAssignment[assignment.id] || assignment.startingCode;
+}
+
+function getAssignmentStatusLabel(assignmentId) {
+  const status = state.progress.statusByAssignment[assignmentId];
+  const hasDraft = Boolean(state.progress.codeByAssignment[assignmentId]);
+
+  if (status === "passed") return "Completed";
+  if (status === "attempted") return "Checks attempted";
+  if (status === "changed") return "Draft changed";
+  if (hasDraft) return "Draft saved";
+  return "Not started";
+}
+
+function loadProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("fakeacademy-progress-v1"));
+    return {
+      codeByAssignment: saved?.codeByAssignment || {},
+      statusByAssignment: saved?.statusByAssignment || {},
+    };
+  } catch {
+    return {
+      codeByAssignment: {},
+      statusByAssignment: {},
+    };
+  }
+}
+
+function saveProgress() {
+  localStorage.setItem("fakeacademy-progress-v1", JSON.stringify(state.progress));
+}
 
 function escapeHtml(value) {
   return String(value)
