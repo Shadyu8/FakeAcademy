@@ -1,6 +1,6 @@
 # FakeAcademy
 
-FakeAcademy is a portfolio project for project-based coding practice. Students pick a language-specific assignment, edit a starter file in the browser, run checks, and keep their progress locally between sessions.
+FakeAcademy is a portfolio project for project-based coding practice. Students pick a language-specific assignment, edit a skeleton file in the browser, run checks, and keep their progress locally between sessions.
 
 The first version is intentionally small: it proves the core loop before adding accounts, backend grading, submissions, or larger Odin Project-style projects.
 
@@ -37,12 +37,6 @@ npm start
 ```
 
 Open `http://localhost:4173`.
-
-## Test
-
-```bash
-npm test
-```
 
 ## Roadmap
 
